@@ -1,0 +1,77 @@
+h1. JUnit4 Experimentations
+
+*Author: "Patrick Hunt":http://people.apache.org/~phunt/* (follow me on "twitter":http://twitter.com/phunt)
+
+h2. Summary
+
+"This project":http://github.com/phunt/junit_sample contains some code I've used to experiment with JUnit4.
+
+The combination of LoggedTest.java and LoggedRunner.java (see detail
+below) allow logging of different phases of a test without having to
+instrument each test individually. This provides enhanced debugging of
+test runs - one can determine (relative to the log output of the code
+under test) when a particular test starts, when the setup starts/end,
+when the test method is called, it's completion status (including
+exception if failure), and when the teardown starts/ends). In some
+cases (test harness, hudson) my tests are being run in such a way that
+all of the log messages are being written to a single log file. Having
+the ability to ascertain the phases of the test is invaluable.
+
+As annotations are inherited, in my projects I've used code derived
+from "LoggedTest" as a base class for my tests, which therefore
+inherit the runner and the watchman rule.
+
+h2. License
+
+This project is licensed under the Apache License Version 2.0
+
+h2. Requirements
+
+* Maven
+
+h2. Contents
+
+h3. Logging test start/end/success/failure
+
+LoggedTest.java, this test contains a TestMatchman JUnit4 rule which
+allows logging (in this case I'm system.out.println, but that could
+easily be replaced with a log4j log call) the
+start/end/success/failure of a test.
+
+h3. Logging test method start/end
+
+LoggedRunner.java, this is a JUnit4 test runner which logs immediately
+before/after a test method is called. It is different from LoggedTest
+in that it logs (again, println in this example) after the "@Before"
+and again just prior to the "@After". This allows us to identify in
+the log the setup/teardown phases.
+
+h2. Usage
+
+bq. mvn test
+
+this outputs details on the test execution phases to stdout (easily
+changed to log4j calls in real code)
+
+you'll see something like the following:
+
+<pre>
+Running org.phunt.junit_sample.LoggedTest
+*starting foo
+setup foo
+*RUNNING foo
+test: foo
+*FINISHED foo
+teardown foo
+*success foo
+*finished foo
+*starting fooFail
+setup fooFail
+*RUNNING fooFail
+test: fooFail
+*FINISHED fooFail
+teardown fooFail
+*failed fooFail java.lang.RuntimeException
+*finished fooFail
+Tests run: 2, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.049 sec <<< FAILURE!
+</pre>
