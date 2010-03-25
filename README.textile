@@ -24,6 +24,8 @@ h3. Logging test start/end/success/failure
 
 LoggedTest.java, this test contains a TestMatchman JUnit4 rule which allows logging (in this case I'm system.out.println, but that could easily be replaced with a log4j log call) the start/end/success/failure of a test.
 
+The setup/teardown/test methods are logging in this example in order to identify the various phases in the output. In production code this would be unnecessary as the logging done by the runner/watchman is sufficient. As a result logging is consistent and each test does not have to be logged individually -- DRY. If you have a large number of tests, this can be a significant benefit.
+
 h3. Logging test method start/end
 
 LoggedRunner.java, this is a JUnit4 test runner which logs immediately before/after a test method is called. It is different from LoggedTest in that it logs (again, println in this example) after the "@Before" and again just prior to the "@After". This allows us to identify in the log the setup/teardown phases.
